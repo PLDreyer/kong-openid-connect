@@ -9,5 +9,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="kong" />
+    <orderEntry type="module" module-name="api-services" />
   </component>
 </module>

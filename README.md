@@ -1,16 +1,12 @@
-[![Build Status][badge-travis-image]][badge-travis-url]
-
-Kong plugin template
+Kongo idc connect plugin
 ====================
 
-This repository contains a very simple Kong plugin template to get you
-up and running quickly for developing your own plugins.
+This repository is based on the great work of kong-plugin-template, lua-openresty-oidc and kong-oidc
 
-This template was designed to work with the
-[`kong-pongo`](https://github.com/Kong/kong-pongo) and
-[`kong-vagrant`](https://github.com/Kong/kong-vagrant) development environments.
+Designed to used with pongo or vagrant.
 
-Please check out those repos `README` files for usage instructions.
+### Scripts
 
-[badge-travis-url]: https://travis-ci.org/Kong/kong-plugin/branches
-[badge-travis-image]: https://travis-ci.com/Kong/kong-plugin.svg?branch=master
+pongo run -- run specs
+
+pongo shell -- test plugin
