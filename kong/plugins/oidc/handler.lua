@@ -51,11 +51,11 @@ end --]]
 function plugin:access(plugin_conf)
   kong.log.inspect(plugin_conf)
 
-  local oidcConfig = utils.get_options(plugin_conf, ngx)
+  local oidc_config = utils.get_options(plugin_conf, ngx)
 
-  if filter.shouldProcessRequest(oidcConfig) then
-    session.configure(plugin_conf)
-    handle(plugin_conf)
+  if filter.shouldProcessRequest(oidc_config) then
+    session.configure(oidc_config)
+    handle(oidc_config)
   else
     kong.log.debug("OidcHandler ignoring request, path: " .. ngx.var.request_uri)
   end
@@ -64,11 +64,11 @@ function plugin:access(plugin_conf)
 end
 
 -- invoked inside access:handle
-function handle(plugin_conf)
+function handle(oidc_config)
   local response
-  if plugin_conf.introspection_endpoint then
-    kong.log.debug("Introspection endpoint configured, path: ".. plugin_conf.introspection_endpoint)
-    response = introspect(plugin_conf)
+  if oidc_config.introspection_endpoint then
+    kong.log.debug("Introspection endpoint configured, path: ".. oidc_config.introspection_endpoint)
+    response = introspect(oidc_config)
     if response then
       kong.log.inspect(response)
       utils.injectUser(response)
@@ -77,10 +77,11 @@ function handle(plugin_conf)
 
   if response == nil then
     kong.log.debug("Make oidc request")
-    response = make_oidc(plugin_conf)
+    response = make_oidc(oidc_config)
     if response then
       if(response.user) then
-        kong.log.debug("Inject user: " .. response.user)
+        kong.log.debug("Inject user: ")
+        kong.log.inspect(response.user)
         utils.injectUser(response.user)
       end
 
@@ -90,7 +91,8 @@ function handle(plugin_conf)
       end
 
       if(response.id_token) then
-        kong.log.debug("Inject id_token: " .. response.id_token)
+        kong.log.debug("Inject id_token: ")
+        kong.log.inspect(response.id_token)
         utils.injectIDToken(response.id_token)
       end
     end
@@ -98,14 +100,14 @@ function handle(plugin_conf)
 end
 
 -- invoked inside handle
-function make_oidc(plugin_conf)
+function make_oidc(oidc_config)
   kong.log.debug("OidcHandler calling authenticate, requested path: " .. ngx.var.request_uri)
-  local res, err = pcall(resty_oidc.authenticate(plugin_conf))
+  local res, err = resty_oidc.authenticate(oidc_config)
   if err then
     kong.log.debug("OidcHandler error: " .. err)
-    if oidcConfig.recovery_page_path then
-      kong.log.debug("Recovery page configured, path: " .. plugin_conf.recovery_page_path)
-      ngx.redirect(plugin_conf.recovery_page_path)
+    if oidc_config.recovery_page_path then
+      kong.log.debug("Recovery page configured, path: " .. oidc_config.recovery_page_path)
+      ngx.redirect(oidc_config.recovery_page_path)
     end
     utils.exit(500, err, ngx.HTTP_INTERNAL_SERVER_ERROR)
   end
@@ -113,12 +115,12 @@ function make_oidc(plugin_conf)
 end
 
 -- invoked inside handle
-function introspect(oidcConfig)
-  if utils.has_bearer_access_token() or oidcConfig.bearer_only == "yes" then
-    local res, err = pcall(resty_oidc.introspect(oidcConfig))
+function introspect(oidc_config)
+  if utils.has_bearer_access_token() or oidc_config.bearer_only == "yes" then
+    local res, err = pcall(resty_oidc.introspect(oidc_config))
     if err then
-      if oidcConfig.bearer_only == "yes" then
-        ngx.header["WWW-Authenticate"] = 'Bearer realm="' .. oidcConfig.realm .. '",error="' .. err .. '"'
+      if oidc_config.bearer_only == "yes" then
+        ngx.header["WWW-Authenticate"] = 'Bearer realm="' .. oidc_config.realm .. '",error="' .. err .. '"'
         utils.exit(ngx.HTTP_UNAUTHORIZED, err, ngx.HTTP_UNAUTHORIZED)
       end
       return nil
