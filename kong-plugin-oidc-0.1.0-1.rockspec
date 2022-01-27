@@ -17,7 +17,8 @@ description = {
 }
 
 dependencies = {
-    "lua-resty-openidc ~> 1.7.5-1"
+    "lua-resty-openidc ~> 1.7.5-1",
+    "lua-resty-http >= 0.08"
 }
 
 build = {
@@ -27,6 +28,7 @@ build = {
     ["kong.plugins."..plugin_name..".schema"] = "kong/plugins/"..plugin_name.."/schema.lua",
     ["kong.plugins."..plugin_name..".filter"] = "kong/plugins/"..plugin_name.."/filter.lua",
     ["kong.plugins."..plugin_name..".utils"] = "kong/plugins/"..plugin_name.."/utils.lua",
-    ["kong.plugins."..plugin_name..".session"] = "kong/plugins/"..plugin_name.."/session.lua"
+    ["kong.plugins."..plugin_name..".session"] = "kong/plugins/"..plugin_name.."/session.lua",
+    ["kong.plugins."..plugin_name..".resolver"] = "kong/plugins/"..plugin_name.."/resolver.lua"
   }
 }

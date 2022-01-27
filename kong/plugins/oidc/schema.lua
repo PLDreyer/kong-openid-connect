@@ -184,6 +184,38 @@ local schema = {
             }
           },
           {
+            session_resolver = {
+              type = "record",
+              fields = {
+                {
+                  enabled = {
+                    type = "boolean",
+                    default = false,
+                  },
+                },
+                {
+                  endpoint = {
+                    type = "string",
+                    required = false,
+                  },
+                },
+                {
+                  userinfo_property = {
+                    type = "string",
+                    required = false,
+                    default = "sub"
+                  },
+                },
+                {
+                  upstream_session_header = {
+                    type = "string",
+                    required = false,
+                  },
+                }
+              }
+            }
+          },
+          {
             filters = {
               type = "string"
             }

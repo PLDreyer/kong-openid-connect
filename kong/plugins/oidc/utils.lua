@@ -50,7 +50,7 @@ function M.get_options(config, ngx)
     bearer_only = config.bearer_only,
     realm = config.realm,
     -- redirect_uri_path = config.redirect_uri_path or M.get_redirect_uri_path(ngx),
-    redirect_uri = redirect_uri,
+    redirect_uri = config.redirect_uri,
     scope = config.scope,
     response_type = config.response_type,
     ssl_verify = config.ssl_verify,
@@ -91,6 +91,11 @@ function M.injectUser(user)
   ngx.ctx.authenticated_credential = tmp_user
   local userinfo = cjson.encode(user)
   ngx.req.set_header("X-Userinfo", ngx.encode_base64(userinfo))
+end
+
+function M.injectSession(session, header)
+  local encoded_session = cjson.encode(session)
+  ngx.req.set_header(header, encoded_session)
 end
 
 function M.has_bearer_access_token()

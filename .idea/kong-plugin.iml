@@ -10,5 +10,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="kong" />
     <orderEntry type="module" module-name="api-services" />
+    <orderEntry type="module" module-name="api-gateway" />
   </component>
 </module>

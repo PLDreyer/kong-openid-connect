@@ -21,7 +21,13 @@ for _, strategy in helpers.all_strategies() do
       bp.plugins:insert {
         name = PLUGIN_NAME,
         route = { id = route1.id },
-        config = {},
+        config = {
+          session_resolver = {
+            enabled = false,
+            endpoint = "https://auth-service.api-services_svc/v1/session",
+            userinfo_property = "sub"
+          }
+        },
       }
 
       -- start kong

@@ -8,6 +8,7 @@
 local utils = require("kong.plugins.oidc.utils")
 local filter = require("kong.plugins.oidc.filter")
 local session = require("kong.plugins.oidc.session")
+local resolver = require("kong.plugins.oidc.resolver")
 local resty_oidc = require("resty.openidc")
 
 -- plugin configuration
@@ -55,7 +56,7 @@ function plugin:access(plugin_conf)
 
   if filter.shouldProcessRequest(oidc_config) then
     session.configure(oidc_config)
-    handle(oidc_config)
+    handle(oidc_config, plugin_conf)
   else
     kong.log.debug("OidcHandler ignoring request, path: " .. ngx.var.request_uri)
   end
@@ -64,7 +65,7 @@ function plugin:access(plugin_conf)
 end
 
 -- invoked inside access:handle
-function handle(oidc_config)
+function handle(oidc_config, plugin_conf)
   local response
   if oidc_config.introspection_endpoint then
     kong.log.debug("Introspection endpoint configured, path: ".. oidc_config.introspection_endpoint)
@@ -83,6 +84,7 @@ function handle(oidc_config)
         kong.log.debug("Inject user: ")
         kong.log.inspect(response.user)
         utils.injectUser(response.user)
+        resolve_session(plugin_conf, response.user)
       end
 
       if(response.access_token) then
@@ -99,12 +101,32 @@ function handle(oidc_config)
   end
 end
 
+function resolve_session(plugin_conf, user)
+  local session = nil
+  local resolver_config, config_error = pcall(resolver.get_options(plugin_conf))
+
+  if config_error then
+    kong.log.error("Error while parsing config for session resolver: "..config_error)
+  end
+
+  if resolver_config then
+    local response, request_error = pcall(resolver.resolve(resolver_config, user))
+    if request_error then
+      kong.log.err("Error while populating user session: "..request_error)
+    end
+    session = response
+  end
+
+  local header = resolver_config.upstream_session_header
+  utils.injectSession(session, header)
+end
+
 -- invoked inside handle
 function make_oidc(oidc_config)
   kong.log.debug("OidcHandler calling authenticate, requested path: " .. ngx.var.request_uri)
   local res, err = resty_oidc.authenticate(oidc_config)
   if err then
-    kong.log.debug("OidcHandler error: " .. err)
+    kong.log.error("OidcHandler error: " ..err)
     if oidc_config.recovery_page_path then
       kong.log.debug("Recovery page configured, path: " .. oidc_config.recovery_page_path)
       ngx.redirect(oidc_config.recovery_page_path)
