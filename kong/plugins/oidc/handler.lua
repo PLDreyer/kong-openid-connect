@@ -73,6 +73,10 @@ function handle(oidc_config, plugin_conf)
     if response then
       kong.log.inspect(response)
       utils.injectUser(response)
+
+      if plugin_conf.session_resolver.enabled then
+        resolve_session(plugin_conf, response)
+      end
     end
   end
 
@@ -81,10 +85,8 @@ function handle(oidc_config, plugin_conf)
     response = make_oidc(oidc_config)
     if response then
       if(response.user) then
-        kong.log.debug("Inject user: ")
-        kong.log.inspect(response.user)
+        kong.log.inspect("Inject user: ",response.user)
         utils.injectUser(response.user)
-        resolve_session(plugin_conf, response.user)
       end
 
       if(response.access_token) then
@@ -93,14 +95,19 @@ function handle(oidc_config, plugin_conf)
       end
 
       if(response.id_token) then
-        kong.log.debug("Inject id_token: ")
-        kong.log.inspect(response.id_token)
+        kong.log.inspect("Inject id_token: ", response.id_token)
         utils.injectIDToken(response.id_token)
+      end
+
+      if(response.user and plugin_conf.session_resolver.enabled) then
+        kong.log.inspect("Resolve session for user: ", response.user)
+        resolve_session(plugin_conf, response.user)
       end
     end
   end
 end
 
+-- resolve session with user from oidc
 function resolve_session(plugin_conf, user)
   local session = nil
   local resolver_config, config_error = pcall(resolver.get_options(plugin_conf))
@@ -114,6 +121,7 @@ function resolve_session(plugin_conf, user)
     if request_error then
       kong.log.err("Error while populating user session: "..request_error)
     end
+    kong.log.inspect("Session response: ", response)
     session = response
   end
 

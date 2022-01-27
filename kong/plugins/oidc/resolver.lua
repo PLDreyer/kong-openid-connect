@@ -3,12 +3,6 @@ local http = require('resty.http')
 local M = {}
 
 function M.get_options(plugin_conf)
-  local rs = plugin_conf.session_resolver
-
-  if not rs.enabled then
-    return
-  end
-
   return {
     endpoint = rs.endpoint,
     userinfo_property = rs.userinfo_property,
