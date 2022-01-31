@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../../Kubernetes/api-gateway" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../pre-transform" vcs="Git" />
   </component>
 </project>

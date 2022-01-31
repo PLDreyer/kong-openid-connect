@@ -49,7 +49,7 @@ function M.get_options(config, ngx)
     introspection_endpoint_auth_method = config.introspection_endpoint_auth_method,
     bearer_only = config.bearer_only,
     realm = config.realm,
-    -- redirect_uri_path = config.redirect_uri_path or M.get_redirect_uri_path(ngx),
+    redirect_uri_path = config.redirect_uri_path,
     redirect_uri = config.redirect_uri,
     scope = config.scope,
     response_type = config.response_type,
@@ -87,7 +87,10 @@ function M.injectUser(user)
   local tmp_user = user
   tmp_user.id = user.sub
   tmp_user.username = user.preferred_username
+  -- saves user in shared plugin context
   kong.ctx.shared.authenticated_credential = tmp_user
+
+  -- saves user in kong context. most used for session
   ngx.ctx.authenticated_credential = tmp_user
   local userinfo = cjson.encode(user)
   ngx.req.set_header("X-Userinfo", ngx.encode_base64(userinfo))

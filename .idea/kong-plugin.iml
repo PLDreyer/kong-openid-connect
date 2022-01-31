@@ -11,5 +11,6 @@
     <orderEntry type="module" module-name="kong" />
     <orderEntry type="module" module-name="api-services" />
     <orderEntry type="module" module-name="api-gateway" />
+    <orderEntry type="module" module-name="pre-transform" />
   </component>
 </module>

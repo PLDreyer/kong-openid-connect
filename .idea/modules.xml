@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/../../TypeScript/api-services/.idea/api-services.iml" filepath="$PROJECT_DIR$/../../TypeScript/api-services/.idea/api-services.iml" />
       <module fileurl="file://$USER_HOME$/Downloads/kong/.idea/kong.iml" filepath="$USER_HOME$/Downloads/kong/.idea/kong.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/kong-plugin.iml" filepath="$PROJECT_DIR$/.idea/kong-plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../pre-transform/.idea/pre-transform.iml" filepath="$PROJECT_DIR$/../pre-transform/.idea/pre-transform.iml" />
     </modules>
   </component>
 </project>

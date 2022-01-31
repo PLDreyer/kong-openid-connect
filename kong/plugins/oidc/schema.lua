@@ -89,6 +89,12 @@ local schema = {
             }
           },
           {
+            redirect_uri_path = {
+              type = "string",
+              required = false,
+            }
+          },
+          {
             scope = {
               type = "string",
               required = true,
@@ -224,7 +230,7 @@ local schema = {
         entity_checks = {
           -- add some validation rules across fields
           -- the following is silly because it is always true, since they are both required
-          -- { at_least_one_of = { "redirect_uri", "redirect_uri_path" }, },
+          { at_least_one_of = { "redirect_uri", "redirect_uri_path" }, },
           -- We specify that both header-names cannot be the same
           -- { distinct = { "request_header", "response_header"} },
         },

@@ -1,6 +1,8 @@
 # servroot is typically the nginx/Kong workingdirectory when testing
 servroot
 
+.idea
+
 # packed distribution format for LuaRocks
 *.rock
 # exclude Pongo shell history
