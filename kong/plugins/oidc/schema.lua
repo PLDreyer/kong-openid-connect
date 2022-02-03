@@ -1,30 +1,25 @@
 local typedefs = require "kong.db.schema.typedefs"
 
--- Grab pluginname from module name
 local plugin_name = ({...})[1]:match("^kong%.plugins%.([^%.]+)")
+
+function validate_headers(pair)
+  local name, value = pair:match("^([^:]+):*(.-)$")
+  if name == nil and value == nil then
+    return nil, "Header format is not valid"
+  end
+
+  return true
+end
 
 local schema = {
   name = plugin_name,
   fields = {
-    -- the 'fields' array is the top-level entry with fields defined by Kong
-    { consumer = typedefs.no_consumer },  -- this plugin cannot be configured on a consumer (typical for auth plugins)
+    { consumer = typedefs.no_consumer },
     { protocols = typedefs.protocols_http },
-    { config = {
-        -- The 'config' record is the custom part of the plugin schema
+    {
+      config = {
         type = "record",
         fields = {
-          -- a standard defined field (typedef), with some customizations
-          --{ request_header = typedefs.header_name {
-          --    required = true,
-          --    default = "Hello-World" } },
-          --{ response_header = typedefs.header_name {
-          --    required = true,
-          --    default = "Bye-World" } },
-          --{ ttl = { -- self defined field
-          --    type = "integer",
-          --    default = 600,
-          --    required = true,
-          --    gt = 0, }}, -- adding a constraint for the value
           {
             -- client_id of registered client
             client_id = {
@@ -68,7 +63,7 @@ local schema = {
             }
           },
           {
-
+            -- use only bearer token
             bearer_only = {
               type = "string",
               required = true,
@@ -76,6 +71,7 @@ local schema = {
             }
           },
           {
+            -- shown realm
             realm = {
               type = "string",
               required = true,
@@ -83,18 +79,21 @@ local schema = {
             }
           },
           {
+            -- redirect uri to IdP
             redirect_uri = {
               type = "string",
               required = false
             }
           },
           {
+            -- redirect path to IdP
             redirect_uri_path = {
               type = "string",
               required = false,
             }
           },
           {
+            -- requested scopes
             scope = {
               type = "string",
               required = true,
@@ -102,6 +101,7 @@ local schema = {
             }
           },
           {
+            -- response type from authorization request
             response_type = {
               type = "string",
               required = true,
@@ -109,6 +109,7 @@ local schema = {
             }
           },
           {
+            -- verify ssl from IdP
             ssl_verify = {
               type = "string",
               required = true,
@@ -116,6 +117,7 @@ local schema = {
             }
           },
           {
+            -- endpoint auth method to receive token from IdP
             token_endpoint_auth_method = {
               type = "string",
               required = true,
@@ -123,18 +125,21 @@ local schema = {
             }
           },
           {
+            -- kong used session secret
             session_secret = {
               type = "string",
               required = false
             }
           },
           {
+            -- refresh session from authenticated user
             refresh_session_interval = {
               type = "number",
               required = false,
             }
           },
           {
+            -- ?encryption?
             accept_none_alg = {
               type = "boolean",
               required = false,
@@ -142,6 +147,7 @@ local schema = {
             }
           },
           {
+            -- renew access token from user on expiry
             renew_access_token_on_expiry = {
               type = "boolean",
               required = true,
@@ -149,6 +155,7 @@ local schema = {
             }
           },
           {
+            -- default expiry from access token when not set in response
             access_token_expires_in = {
               type = "number",
               default = 3600,
@@ -156,6 +163,7 @@ local schema = {
             }
           },
           {
+            -- use nonce for authorization request
             use_nonce = {
               type = "boolean",
               default = true,
@@ -163,6 +171,7 @@ local schema = {
             }
           },
           {
+            -- revoke tokens at logout at IdP
             revoke_tokens_on_logout = {
               type = "boolean",
               default = true,
@@ -170,12 +179,14 @@ local schema = {
             }
           },
           {
+            -- when something went wrong
             recovery_page_path = {
               type = "string",
               required = false,
             }
           },
           {
+            -- path for logut request
             logout_path = {
               type = "string",
               required = false,
@@ -183,6 +194,7 @@ local schema = {
             }
           },
           {
+            -- page to redirect after logout
             redirect_after_logout_uri = {
               type = "string",
               required = false,
@@ -190,49 +202,22 @@ local schema = {
             }
           },
           {
-            session_resolver = {
-              type = "record",
-              fields = {
-                {
-                  enabled = {
-                    type = "boolean",
-                    default = false,
-                  },
-                },
-                {
-                  endpoint = {
-                    type = "string",
-                    required = false,
-                  },
-                },
-                {
-                  userinfo_property = {
-                    type = "string",
-                    required = false,
-                    default = "sub"
-                  },
-                },
-                {
-                  upstream_session_header = {
-                    type = "string",
-                    required = false,
-                  },
-                }
-              }
-            }
-          },
-          {
+            -- when not to execute plugin
             filters = {
               type = "string"
             }
-          }
+          },
+          {
+            disallowed_consumers = {
+              type = "array",
+              required = true,
+              default = {},
+              elements = { type = "string" }
+            }
+          },
         },
         entity_checks = {
-          -- add some validation rules across fields
-          -- the following is silly because it is always true, since they are both required
           { at_least_one_of = { "redirect_uri", "redirect_uri_path" }, },
-          -- We specify that both header-names cannot be the same
-          -- { distinct = { "request_header", "response_header"} },
         },
       },
     },
