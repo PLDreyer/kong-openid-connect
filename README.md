@@ -59,6 +59,18 @@ local config = {
     logout_path = "https://example.com/logout",
     -- redirect to uri after logout
     redirect_after_logout_uri = "https://example.com",
+    -- authorization param
+    prompt = "consent",
+    -- authorization param
+    display = "page",
+    -- authorization param
+    max_age = 36000,
+    -- authorization param
+    ui_locales = "de-DE",
+    -- authorization param
+    id_token_hint = true,
+    -- authorization param
+    acr_values = "0",
     -- filters for domains
     filters = "max.com, mustermann.com",
     -- disallowed consumers have to be processed

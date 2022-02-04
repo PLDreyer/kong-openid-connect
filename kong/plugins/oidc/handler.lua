@@ -73,10 +73,12 @@ end
 -- invoked inside handle
 function make_oidc(oidc_config)
   kong.log.debug("Calling authenticate, requested path: ", ngx.var.request_uri)
-  local res, err = resty_oidc.authenticate(oidc_config)
+  local res, err, var1, var2 = resty_oidc.authenticate(oidc_config)
 
   if err then
-    kong.log.error("OidcHandler error: ", err)
+    kong.log.err("var1: ", var1)
+    kong.log.err("var2: ", var2)
+    kong.log.err("OidcHandler error: ", err)
 
     if oidc_config.recovery_page_path then
       kong.log.debug("Recovery page configured, path: ", oidc_config.recovery_page_path)

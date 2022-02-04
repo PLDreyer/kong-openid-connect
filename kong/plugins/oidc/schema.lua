@@ -202,6 +202,61 @@ local schema = {
             }
           },
           {
+            -- authorization param
+            prompt = {
+              type = "string",
+              default = "consent",
+              one_of = {
+                "none",
+                "login",
+                "consent",
+                "select_account",
+              }
+            },
+          },
+          {
+            -- authorization param
+            display = {
+              type = "string",
+              default = "page",
+              one_of = {
+                "page",
+                "popup",
+                "touch",
+                "wap"
+              }
+            }
+          },
+          {
+            -- authorization param
+            max_age = {
+              type = "number",
+              required = false,
+            }
+          },
+          {
+            -- authorization param
+            ui_locales = {
+              type = "string",
+              required = false,
+            }
+          },
+          {
+            -- authorization param
+            id_token_hint = {
+              type = "boolean",
+              required = false,
+              default = false,
+            }
+          },
+          {
+            -- authorization param
+            acr_values = {
+              type = "string",
+              required = false,
+            }
+          },
+          {
             -- when not to execute plugin
             filters = {
               type = "string"

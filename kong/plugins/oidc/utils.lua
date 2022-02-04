@@ -17,6 +17,17 @@ local function parseFilters(csvFilters)
   return filters
 end
 
+-- get additional authorization params from config and merge to table
+local function parseAuthorizationParams(config)
+  local extraParams = {}
+  local extraParamProperties = {"display", "max_age", "ui_locales", "id_token_hint", "acr_values"}
+  for _, var in ipairs(extraParamProperties) do
+    extraParams[var] = config[var]
+  end
+
+  return extraParams
+end
+
 -- generate redirect uri path
 function M.get_redirect_uri_path(ngx)
   local function drop_query()
@@ -71,6 +82,8 @@ function M.get_options(config, ngx)
     recovery_page_path = config.recovery_page_path,
     logout_path = config.logout_path,
     redirect_after_logout_uri = config.redirect_after_logout_uri,
+    prompt = config.prompt,
+    authorization_params = parseAuthorizationParams(config),
     disallowed_consumers = config.disallowed_consumers,
     filters = parseFilters(config.filters),
   }
