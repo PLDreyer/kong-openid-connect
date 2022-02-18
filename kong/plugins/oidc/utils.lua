@@ -28,25 +28,6 @@ local function parseAuthorizationParams(config)
   return extraParams
 end
 
--- only get fields from session_options whose are configured
-local function parseSessionOptions(configSessionOptions)
-  local sessionOptions = {}
-  utils.debug_log_table("SessionOptions to parse: ", configSessionOptions)
-  for outerKey, outerOption in ipairs(configSessionOptions) do
-    if outerOption ~= nil then
-      sessionOptions[outerKey] = {}
-      for innerKey, innerOption in ipairs(var) do
-        if innerOption ~= nil then
-          sessionOptions[outerKey][innerKey] = innerOption
-        end
-      end
-    end
-  end
-
-  utils.debug_log_table("Parsed SessionOptions: ", sessionOptions)
-  return sessionOptions
-end
-
 -- generate redirect uri path
 function M.get_redirect_uri_path(ngx)
   local function drop_query()
@@ -103,7 +84,7 @@ function M.get_options(config, ngx)
     redirect_after_logout_uri = config.redirect_after_logout_uri,
     prompt = config.prompt,
     authorization_params = parseAuthorizationParams(config),
-    session_options = parseSessionOptions(config.session_options),
+    session_options = config.session_options,
     disallowed_consumers = config.disallowed_consumers,
     filters = parseFilters(config.filters),
   }

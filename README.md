@@ -74,6 +74,7 @@ local config = {
     -- session options
     -- only options set will be passed
     session_options = {
+        expires = 3600,
         cookie = {
             persistent = "off",
             domain = "example.com",

@@ -73,7 +73,9 @@ end
 -- invoked inside handle
 function make_oidc(oidc_config)
   kong.log.debug("Calling authenticate, requested path: ", ngx.var.request_uri)
-  local res, err, var1, var2 = resty_oidc.authenticate(oidc_config, nil, nil, oidc_config.session_options)
+  local requested_location = kong.request.get_host() .. kong.request.get_path()
+  kong.log.debug("Requested location: ", requested_location)
+  local res, err, var1, var2 = resty_oidc.authenticate(oidc_config, requested_location, nil, oidc_config.session_options)
 
   if err then
     kong.log.err("var1: ", var1)

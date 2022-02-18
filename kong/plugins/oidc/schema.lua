@@ -262,6 +262,12 @@ local schema = {
               type = "record",
               fields = {
                 {
+                  expires = {
+                    type = "number",
+                    required = false,
+                  }
+                },
+                {
                   cookie = {
                     type = "record",
                     fields = {
