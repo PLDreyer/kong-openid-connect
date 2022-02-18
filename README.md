@@ -71,6 +71,18 @@ local config = {
     id_token_hint = true,
     -- authorization param
     acr_values = "0",
+    -- session options
+    -- only options set will be passed
+    session_options = {
+        cookie = {
+            persistent = "off",
+            domain = "example.com",
+            path = "/",
+            sameSite = "Lax",
+            secure = "on",
+            httpOnly = "on",
+        },
+    },
     -- filters for domains
     filters = "max.com, mustermann.com",
     -- disallowed consumers have to be processed

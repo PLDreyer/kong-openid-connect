@@ -257,6 +257,57 @@ local schema = {
             }
           },
           {
+            -- session options for bungle/lua-resty-session
+            session_options = {
+              type = "record",
+              fields = {
+                {
+                  cookie = {
+                    type = "record",
+                    fields = {
+                      {
+                        persistent = {
+                          type = "string",
+                          required = false,
+                        }
+                      },
+                      {
+                        domain = {
+                          type = "string",
+                          required = false,
+                        }
+                      },
+                      {
+                        path = {
+                          type = "string",
+                          required = false,
+                        }
+                      },
+                      {
+                        sameSite = {
+                          type = "string",
+                          required = false,
+                        }
+                      },
+                      {
+                        secure = {
+                          type = "string",
+                          required = false,
+                        }
+                      },
+                      {
+                        httpOnly = {
+                          type = "string",
+                          required = false,
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
             -- when not to execute plugin
             filters = {
               type = "string"
