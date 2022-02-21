@@ -17,7 +17,9 @@ description = {
 }
 
 dependencies = {
+    "lua >= 5.1",
     "lua-resty-openidc ~> 1.7.5-1",
+    "lua-resty-session >= 2.8",
 }
 
 build = {

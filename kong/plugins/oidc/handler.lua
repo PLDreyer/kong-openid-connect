@@ -1,7 +1,7 @@
 local utils = require("kong.plugins.oidc.utils")
 local filter = require("kong.plugins.oidc.filter")
-local session = require("kong.plugins.oidc.session")
 local resty_oidc = require("resty.openidc")
+local resty_session = require("resty.session")
 
 local plugin = {
   -- last authentication priority
@@ -21,7 +21,6 @@ function plugin:access(plugin_conf)
     utils.debug_log_table("Consumer before oidc: ", consumer)
     if not consumer or consumer and utils.is_disallowed_consumer(oidc_config, consumer) then
       kong.log.debug("Either no consumer or disallowed consumer found. Proceeding")
-      session.configure(oidc_config)
       handle(oidc_config, plugin_conf)
     else
       kong.log.debug("Resolved header found. Ignore processing")
@@ -73,8 +72,15 @@ end
 -- invoked inside handle
 function make_oidc(oidc_config)
   kong.log.debug("Calling authenticate, requested path: ", ngx.var.request_uri)
-  local requested_location = kong.request.get_host() .. kong.request.get_path()
-  kong.log.debug("Requested location: ", requested_location)
+  local requested_location = nil
+
+  local session, present, reason = resty_session.open()
+  if not present then
+    kong.log.debug("Session not present. Reason: ", reason)
+    requested_location = kong.request.get_scheme() .. "://" .. kong.request.get_host() .. kong.request.get_path()
+    kong.log.debug("Request path generated: ", requested_location)
+  end
+
   local res, err, var1, var2 = resty_oidc.authenticate(oidc_config, requested_location, nil, oidc_config.session_options)
 
   if err then

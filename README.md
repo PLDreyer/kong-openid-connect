@@ -39,8 +39,6 @@ local config = {
     ssl_verify = "yes",
     -- token endpoint auth method
     token_endpoint_auth_method = "client_secret_post",
-    -- session secret from kong to use
-    session_secret = "very_secure",
     -- interval to refresh token information
     refresh_session_interval = 36000,
     -- accept none alg
@@ -74,6 +72,7 @@ local config = {
     -- session options
     -- only options set will be passed
     session_options = {
+        secret = "623q4hR325t36VsCD3g567922IC0073T",
         expires = 3600,
         cookie = {
             persistent = "off",

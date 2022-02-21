@@ -125,13 +125,6 @@ local schema = {
             }
           },
           {
-            -- kong used session secret
-            session_secret = {
-              type = "string",
-              required = false
-            }
-          },
-          {
             -- refresh session from authenticated user
             refresh_session_interval = {
               type = "number",
@@ -262,46 +255,61 @@ local schema = {
               type = "record",
               fields = {
                 {
+                  -- secret for session encryption
+                  secret = {
+                    type = "string",
+                    required = true,
+                  }
+                },
+                {
+                  -- expiry time for session
                   expires = {
                     type = "number",
                     required = false,
                   }
                 },
                 {
+                  -- cookie settings
                   cookie = {
                     type = "record",
                     fields = {
                       {
+                        -- persistent cookie (session/long)
                         persistent = {
                           type = "string",
                           required = false,
                         }
                       },
                       {
+                        -- domain to set cookie for
                         domain = {
                           type = "string",
                           required = false,
                         }
                       },
                       {
+                        -- path to set cookie for
                         path = {
                           type = "string",
                           required = false,
                         }
                       },
                       {
+                        -- cookie samesite attribute
                         sameSite = {
                           type = "string",
                           required = false,
                         }
                       },
                       {
+                        -- cookie secure attribute
                         secure = {
                           type = "string",
                           required = false,
                         }
                       },
                       {
+                        -- cookie httponly attribute
                         httpOnly = {
                           type = "string",
                           required = false,
@@ -320,6 +328,8 @@ local schema = {
             }
           },
           {
+            -- not allowed consumers
+            -- intercept when some were found
             disallowed_consumers = {
               type = "array",
               required = true,
