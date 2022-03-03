@@ -164,6 +164,14 @@ local schema = {
             }
           },
           {
+            -- use pkce code challenge (always S256)
+            use_pkce = {
+              type = "boolean",
+              default = false,
+              required = true,
+            }
+          },
+          {
             -- revoke tokens at logout at IdP
             revoke_tokens_on_logout = {
               type = "boolean",

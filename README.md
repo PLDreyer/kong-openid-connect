@@ -49,6 +49,8 @@ local config = {
     access_token_expires_in = 3600,
     -- use a nonce for flow
     use_nonce = true,
+    -- use code challenge (S256)
+    use_pkce = true,
     -- revoke tokens on logout
     revoke_tokens_on_logout = true,
     -- recovery page path when something fails

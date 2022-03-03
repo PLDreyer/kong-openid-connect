@@ -51,6 +51,7 @@ function handle(oidc_config, plugin_conf)
     kong.log.debug("Make oidc request")
     response = make_oidc(oidc_config)
     if response then
+      kong.log.inspect("IdP Response: ", response)
       if(response.user) then
         utils.debug_log_table("Inject user: ", response.user)
         utils.injectUser(response.user)
@@ -81,7 +82,14 @@ function make_oidc(oidc_config)
     kong.log.debug("Request path generated: ", requested_location)
   end
 
+  session:close()
+
   local res, err, var1, var2 = resty_oidc.authenticate(oidc_config, requested_location, nil, oidc_config.session_options)
+
+  kong.log.inspect("RES: ", res)
+  kong.log.inspect("ERR: ", err)
+  kong.log.inspect("VAR1: ", var1)
+  kong.log.inspect("VAR2: ", var2)
 
   if err then
     kong.log.err("var1: ", var1)

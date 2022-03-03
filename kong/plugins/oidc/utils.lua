@@ -78,6 +78,7 @@ function M.get_options(config, ngx)
     renew_access_token_on_expiry = config.renew_access_token_on_expiry,
     access_token_expires_in = config.access_token_expires_in,
     use_nonce = config.use_nonce,
+    use_pkce = config.use_pkce,
     revoke_tokens_on_logout = config.revoke_tokens_on_logout,
     recovery_page_path = config.recovery_page_path,
     logout_path = config.logout_path,
