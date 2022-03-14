@@ -75,26 +75,21 @@ function make_oidc(oidc_config)
   kong.log.debug("Calling authenticate, requested path: ", ngx.var.request_uri)
   local requested_location = nil
 
-  local session, present, reason = resty_session.open()
+  local current_session, present, reason = resty_session.open()
   if not present then
     kong.log.debug("Session not present. Reason: ", reason)
     requested_location = kong.request.get_scheme() .. "://" .. kong.request.get_host() .. kong.request.get_path()
     kong.log.debug("Request path generated: ", requested_location)
   end
 
-  session:close()
+  current_session:close()
 
-  local res, err, var1, var2 = resty_oidc.authenticate(oidc_config, requested_location, nil, oidc_config.session_options)
-
-  kong.log.inspect("RES: ", res)
-  kong.log.inspect("ERR: ", err)
-  kong.log.inspect("VAR1: ", var1)
-  kong.log.inspect("VAR2: ", var2)
+  local res, err, target, session = resty_oidc.authenticate(oidc_config, requested_location, nil, oidc_config.session_options)
 
   if err then
-    kong.log.err("var1: ", var1)
-    kong.log.err("var2: ", var2)
     kong.log.err("OidcHandler error: ", err)
+    kong.log.err("OidcHandler target: ", target)
+    kong.log.err("OidcHandler session: ", session)
 
     if oidc_config.recovery_page_path then
       kong.log.debug("Recovery page configured, path: ", oidc_config.recovery_page_path)
